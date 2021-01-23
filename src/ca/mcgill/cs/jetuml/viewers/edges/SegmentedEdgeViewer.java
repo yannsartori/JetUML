@@ -25,30 +25,34 @@ import java.util.function.Function;
 import ca.mcgill.cs.jetuml.diagram.Edge;
 import ca.mcgill.cs.jetuml.geom.Conversions;
 import ca.mcgill.cs.jetuml.geom.Dimension;
+import ca.mcgill.cs.jetuml.geom.Direction;
 import ca.mcgill.cs.jetuml.geom.Line;
 import ca.mcgill.cs.jetuml.geom.Point;
 import ca.mcgill.cs.jetuml.geom.Rectangle;
 import ca.mcgill.cs.jetuml.views.ArrowHead;
 import ca.mcgill.cs.jetuml.views.LineStyle;
 import ca.mcgill.cs.jetuml.views.ToolGraphics;
+import ca.mcgill.cs.jetuml.views.StringViewer.Align;
+import ca.mcgill.cs.jetuml.views.EdgeLabelViewer;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
-import javafx.geometry.VPos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.Shape;
-import javafx.scene.text.TextAlignment;
 
 /**
  * Renders edges as a path consisting of straight line segments.
  */
 public class SegmentedEdgeViewer extends AbstractEdgeViewer
 {
+	private static final int NORTH_EAST = 45;
+	private static final int SOUTH_EAST = 135;
+	private static final int NORTH_WEST = 315;
+	private static final int START_END_LABEL_DISPLACEMENT = 15;
+	private static final int MIDDLE_LABEL_DISPLACEMENT = 10;
 	private Function<Edge, LineStyle> aLineStyleExtractor;
 	private Function<Edge, ArrowHead> aArrowStartExtractor;
 	private Function<Edge, ArrowHead> aArrowEndExtractor;
@@ -56,6 +60,9 @@ public class SegmentedEdgeViewer extends AbstractEdgeViewer
 	private Function<Edge, String> aMiddleLabelExtractor;
 	private Function<Edge, String> aEndLabelExtractor;
 	private SegmentationStyle aStyle;
+	private EdgeLabelViewer aStartLabelViewer;
+	private EdgeLabelViewer aMiddleLabelViewer;
+	private EdgeLabelViewer aEndLabelViewer;
 	
 	/**
 	 * @param pStyle The segmentation style.
@@ -77,48 +84,9 @@ public class SegmentedEdgeViewer extends AbstractEdgeViewer
 		aStartLabelExtractor = pStartLabelExtractor;
 		aMiddleLabelExtractor = pMiddleLabelExtractor;
 		aEndLabelExtractor = pEndLabelExtractor;
-	}
-	
-	/**
-	 * Draws a string.
-	 * @param pGraphics the graphics context
-	 * @param pEndPoint1 an endpoint of the segment along which to draw the string
-	 * @param pEndPoint2 the other endpoint of the segment along which to draw the string
-	 * @param pString the string to draw 
-	 * @param pCenter true if the string should be centered along the segment
-	 */
-	private static void drawString(GraphicsContext pGraphics, Point2D pEndPoint1, Point2D pEndPoint2, 
-			ArrowHead pArrowHead, String pString, boolean pCenter)
-	{
-		if (pString == null || pString.length() == 0)
-		{
-			return;
-		}
-		Rectangle bounds = getStringBounds(pEndPoint1, pEndPoint2, pArrowHead, pString, pCenter);
-		
-		Paint oldFill = pGraphics.getFill();
-		VPos oldVPos = pGraphics.getTextBaseline();
-		TextAlignment oldAlign = pGraphics.getTextAlign();
-		pGraphics.translate(bounds.getX(), bounds.getY());
-		pGraphics.setFill(Color.BLACK);
-		int textX = 0;
-		int textY = 0;
-		if(pCenter) 
-		{
-			textX = bounds.getWidth()/2;
-			textY = bounds.getHeight() - textDimensions(pString).height()/2;
-			pGraphics.setTextBaseline(VPos.BOTTOM);
-			if ( pEndPoint2.getY() > pEndPoint1.getY() ) 
-			{
-				pGraphics.setTextBaseline(VPos.TOP);
-			}
-			pGraphics.setTextAlign(TextAlignment.CENTER);
-		}
-		pGraphics.fillText(pString, textX, textY);
-		pGraphics.translate(-bounds.getX(), -bounds.getY()); 
-		pGraphics.setFill(oldFill);
-		pGraphics.setTextBaseline(oldVPos);
-		pGraphics.setTextAlign(oldAlign);
+		aStartLabelViewer = new EdgeLabelViewer(Align.LEFT, Direction.fromAngle(NORTH_EAST), START_END_LABEL_DISPLACEMENT);
+		aEndLabelViewer = new EdgeLabelViewer(Align.RIGHT, Direction.fromAngle(NORTH_WEST), START_END_LABEL_DISPLACEMENT);
+		aMiddleLabelViewer = new EdgeLabelViewer(Align.CENTER, Direction.fromAngle(NORTH_WEST), MIDDLE_LABEL_DISPLACEMENT);
 	}
 	
 	@Override
@@ -133,11 +101,64 @@ public class SegmentedEdgeViewer extends AbstractEdgeViewer
 		aArrowEndExtractor.apply(pEdge).view().draw(pGraphics, 
 				Conversions.toPoint(points[points.length - 2]), 
 				Conversions.toPoint(points[points.length - 1]));
-
-		drawString(pGraphics, points[1], points[0], aArrowStartExtractor.apply(pEdge), aStartLabelExtractor.apply(pEdge), false);
-		drawString(pGraphics, points[points.length / 2 - 1], points[points.length / 2], null, aMiddleLabelExtractor.apply(pEdge), true);
-		drawString(pGraphics, points[points.length - 2], points[points.length - 1], 
-				aArrowEndExtractor.apply(pEdge), aEndLabelExtractor.apply(pEdge), false);
+		
+		drawLabels(pEdge, pGraphics, points);
+		
+	}
+	
+	private void drawLabels(Edge pEdge, GraphicsContext pGraphics, Point2D[] pPoints)
+	{
+		
+		Point2D middleLabelAnchor = pPoints[pPoints.length / 2 - 1].midpoint(pPoints[pPoints.length / 2]);
+		
+		if ( pPoints[0].getX() == pPoints[1].getX() && pPoints[0].getY() > pPoints[1].getY()) 
+		{
+			// Arrow is on north edge
+			aStartLabelViewer.setDirection(Direction.fromAngle(NORTH_EAST));
+			aStartLabelViewer.setAlignment(Align.LEFT);
+			aEndLabelViewer.setDirection(Direction.fromAngle(SOUTH_EAST));
+			aEndLabelViewer.setAlignment(Align.LEFT);
+		}
+		else if ( pPoints[0].getX() <= pPoints[1].getX() && pPoints[0].getY() == pPoints[1].getY() )
+		{
+			// Arrow is on east edge
+			aStartLabelViewer.setDirection(Direction.fromAngle(NORTH_EAST));
+			aStartLabelViewer.setAlignment(Align.LEFT);
+			aEndLabelViewer.setDirection(Direction.fromAngle(NORTH_WEST));
+			aEndLabelViewer.setAlignment(Align.RIGHT);
+		}
+		else if ( pPoints[0].getX() == pPoints[1].getX() && pPoints[0].getY() <= pPoints[1].getY() )
+		{
+			//Arrow is on south edge
+			aStartLabelViewer.setDirection(Direction.fromAngle(SOUTH_EAST));
+			aStartLabelViewer.setAlignment(Align.LEFT);
+			aEndLabelViewer.setDirection(Direction.fromAngle(NORTH_EAST));
+			aEndLabelViewer.setAlignment(Align.LEFT);
+		}
+		else 
+		{
+			//Arrow is on west edge
+			aStartLabelViewer.setDirection(Direction.fromAngle(NORTH_WEST));
+			aStartLabelViewer.setAlignment(Align.RIGHT);
+			aEndLabelViewer.setDirection(Direction.fromAngle(NORTH_EAST));
+			aEndLabelViewer.setAlignment(Align.LEFT);
+		}
+		
+		if ( pPoints[pPoints.length / 2 - 1].getX() == pPoints[pPoints.length / 2].getX() )
+		{
+			//Middle segment is vertical
+			aMiddleLabelViewer.setDirection(Direction.EAST);
+			aMiddleLabelViewer.setAlignment(Align.LEFT);
+		} 
+		else 
+		{
+			//Middle segment is horizontal
+			aMiddleLabelViewer.setDirection(Direction.NORTH);
+			aMiddleLabelViewer.setAlignment(Align.CENTER);
+		}
+		aStartLabelViewer.draw(aStartLabelExtractor.apply(pEdge), pGraphics, pPoints[0]);
+		aMiddleLabelViewer.draw(aMiddleLabelExtractor.apply(pEdge), pGraphics, middleLabelAnchor);
+		aEndLabelViewer.draw(aEndLabelExtractor.apply(pEdge), pGraphics, pPoints[pPoints.length - 1]);
 	}
 	
 	/**
