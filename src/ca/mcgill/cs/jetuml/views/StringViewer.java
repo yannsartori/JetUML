@@ -23,6 +23,7 @@ package ca.mcgill.cs.jetuml.views;
 import ca.mcgill.cs.jetuml.geom.Dimension;
 import ca.mcgill.cs.jetuml.geom.Rectangle;
 import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
 import javafx.geometry.VPos;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.text.Font;
@@ -37,7 +38,7 @@ import javafx.scene.text.TextBoundsType;
  * - bold
  * - different alignments.
  */
-public final class StringViewer
+public class StringViewer
 {
 	public static final Font FONT = Font.font("System", 12);
 	private static final Font FONT_BOLD = Font.font(FONT.getFamily(), FontWeight.BOLD, FONT.getSize());
@@ -52,7 +53,7 @@ public final class StringViewer
 	public enum Align
 	{ LEFT, CENTER, RIGHT }
 	
-	private Align aAlignment = Align.CENTER;
+	protected Align aAlignment = Align.CENTER;
 	private final boolean aBold;
 	private final boolean aUnderlined;
 	
@@ -181,5 +182,40 @@ public final class StringViewer
 		pGraphics.translate(-pRectangle.getX(), -pRectangle.getY());
 		pGraphics.setTextBaseline(oldVPos);
 		pGraphics.setTextAlign(oldAlign);
+	}
+	
+	/**
+	 * Draws the string with no padding anchored at a point, according to the alignment.
+	 * @param pString The string to draw.
+	 * @param pGraphics The graphics context.
+	 * @param pPoint The point to which the string is anchored 
+	 */
+	public void draw(String pString, GraphicsContext pGraphics, Point2D pPoint) 
+	{
+		final Dimension textDimension = getNoBoundsDimension(pString);
+		
+		int textX = (int) pPoint.getX();
+		int textY = (int) pPoint.getY();
+		if ( aAlignment == Align.CENTER ) 
+		{
+			textX -= textDimension.width() / 2;
+		} 
+		else if ( aAlignment == Align.RIGHT ) 
+		{
+			textX -= textDimension.width();
+		}
+		ViewUtils.drawText(pGraphics, textX, textY, pString, FONT);
+	}
+	
+	private Dimension getNoBoundsDimension(String pString)
+	{
+		assert pString != null;
+		if(pString.length() == 0) 
+		{
+			return EMPTY;
+		}
+		Bounds bounds = getLabel(pString).getLayoutBounds(); 
+		return new Dimension((int) Math.round(bounds.getWidth()), 
+				(int) Math.round(bounds.getHeight()));
 	}
 }
