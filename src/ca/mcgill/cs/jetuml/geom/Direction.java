@@ -137,7 +137,7 @@ public final class Direction
 	{
 		return aAngleInDegrees;
 	}
-
+	
 	/*
 	 * Computes an angle given a width an a height, so 
 	 * that angle 0 corresponds to pWidth=0 and pHeight > 0,
@@ -166,6 +166,16 @@ public final class Direction
 		return (int) (degrees + DEGREES_IN_CIRCLE) % DEGREES_IN_CIRCLE;
 	}
 
+	/**
+	 * @param pDistance The distance to travel
+	 * @return The point distance away from the origin traveling in this direction.
+	 */
+	public Point travelFromOrigin(int pDistance)
+	{
+		double angle = Math.toRadians(aAngleInDegrees - EAST.asAngle());
+		return new Point((int) (pDistance * Math.cos(angle)), (int) (pDistance * Math.sin(angle)));
+	}
+	
 	@Override
 	public String toString()
 	{
