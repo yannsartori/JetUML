@@ -20,6 +20,7 @@
  *******************************************************************************/
 package ca.mcgill.cs.jetuml.application;
 
+import static ca.mcgill.cs.jetuml.views.StringViewer.DEFAULT_FONT_SIZE;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
@@ -59,7 +60,7 @@ public final class UserPreferences
 	 */
 	public enum IntegerPreference
 	{
-		diagramWidth(0), diagramHeight(0), nextTipId(1);
+		diagramWidth(0), diagramHeight(0), nextTipId(1), fontSize(DEFAULT_FONT_SIZE);
 		
 		private int aDefault;
 		
