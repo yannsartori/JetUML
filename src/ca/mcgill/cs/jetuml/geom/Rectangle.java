@@ -113,7 +113,7 @@ public class Rectangle
 	
 	/**
 	 * @param pPoint The point to check.
-	 * @return True iif pPoint is within the rectangle or on its boundary.
+	 * @return True if pPoint is within the rectangle or on its boundary.
 	 * @pre pPoint != null;
 	 */
 	public boolean contains(Point pPoint)
@@ -125,7 +125,7 @@ public class Rectangle
 	
 	/**
 	 * @param pRectangle The rectangle to check.
-	 * @return True iif pRectangle is entired contains within this rectangle.
+	 * @return True if pRectangle is entirely contained within this rectangle.
 	 * @pre pRectangle !=null.
 	 */
 	public boolean contains(Rectangle pRectangle)
