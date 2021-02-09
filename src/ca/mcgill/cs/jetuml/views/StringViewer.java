@@ -22,6 +22,8 @@ package ca.mcgill.cs.jetuml.views;
 
 import ca.mcgill.cs.jetuml.geom.Dimension;
 import ca.mcgill.cs.jetuml.geom.Rectangle;
+import ca.mcgill.cs.jetuml.application.UserPreferences;
+import ca.mcgill.cs.jetuml.application.UserPreferences.IntegerPreference;
 import javafx.geometry.VPos;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.text.Font;
@@ -36,9 +38,9 @@ import javafx.scene.text.TextAlignment;
  */
 public final class StringViewer
 {
-	public static final Font FONT = Font.font("System", 12);
-	private static final Font FONT_BOLD = Font.font(FONT.getFamily(), FontWeight.BOLD, FONT.getSize());
-	private static final FontMetrics METRIC = new FontMetrics(FONT);
+	public static final int DEFAULT_FONT_SIZE = 12;
+
+	private static final FontMetrics METRIC = new FontMetrics(getFont());
 	
 	private static final Dimension EMPTY = new Dimension(0, 0);
 	private static final int HORIZONTAL_TEXT_PADDING = 7;
@@ -69,17 +71,31 @@ public final class StringViewer
 		aBold = pBold;
 		aUnderlined = pUnderlined;
 	}
-	
-	private Font getFont()
+
+	/**
+	 * Gets the font according to the user size preferences.
+	 * @param pBold If the font is bold.
+	 * @return The font
+	 */
+	public static Font getFont(boolean pBold)
 	{
-		if( aBold )
+		if( pBold )
 		{
-			return FONT_BOLD;
+			return Font.font("System", FontWeight.BOLD, UserPreferences.instance().getInteger(IntegerPreference.fontSize));
 		}
 		else
 		{
-			return FONT;
+			return Font.font("System", UserPreferences.instance().getInteger(IntegerPreference.fontSize));
 		}
+	}
+
+	/**
+	 * Gets the font according to the user size preferences.
+	 * @return The font
+	 */
+	public static Font getFont()
+	{
+		return getFont(false);
 	}
 	
 	/**
@@ -96,7 +112,7 @@ public final class StringViewer
 		{
 			return EMPTY;
 		}
-		Rectangle bounds = METRIC.getBoundingBox(FONT, pString, aAlignment);
+		Rectangle bounds = METRIC.getBoundingBox(getFont(aBold), pString, aAlignment);
 		return new Dimension((int) Math.round(bounds.getWidth() + HORIZONTAL_TEXT_PADDING*2), 
 				(int) Math.round(bounds.getHeight() + VERTICAL_TEXT_PADDING*2));
 	}
@@ -142,17 +158,17 @@ public final class StringViewer
 		}
 		
 		pGraphics.translate(pRectangle.getX(), pRectangle.getY());
-		ViewUtils.drawText(pGraphics, textX, textY, pString.trim(), getFont());
+		ViewUtils.drawText(pGraphics, textX, textY, pString.trim(), getFont(aBold));
 		
 		if(aUnderlined && pString.trim().length() > 0)
 		{
 			int xOffset = 0;
 			int yOffset = 0;
-			Rectangle bounds = METRIC.getBoundingBox(FONT, pString, aAlignment);
+			Rectangle bounds = METRIC.getBoundingBox(getFont(aBold), pString, aAlignment);
 			if(aAlignment == Align.CENTER)
 			{
 				xOffset = (int) (bounds.getWidth()/2);
-				yOffset = (int) (METRIC.getLogicalHeight(FONT, pString)/2) + 1;
+				yOffset = (int) (METRIC.getLogicalHeight(getFont(aBold), pString)/2) + 1;
 			}
 			else if(aAlignment == Align.RIGHT)
 			{
