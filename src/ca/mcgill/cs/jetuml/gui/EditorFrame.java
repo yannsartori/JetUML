@@ -22,6 +22,7 @@
 package ca.mcgill.cs.jetuml.gui;
 
 import static ca.mcgill.cs.jetuml.application.ApplicationResources.RESOURCES;
+import static ca.mcgill.cs.jetuml.views.StringViewer.DEFAULT_FONT_SIZE;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -46,6 +47,7 @@ import ca.mcgill.cs.jetuml.application.FileExtensions;
 import ca.mcgill.cs.jetuml.application.RecentFilesQueue;
 import ca.mcgill.cs.jetuml.application.UserPreferences;
 import ca.mcgill.cs.jetuml.application.UserPreferences.BooleanPreference;
+import ca.mcgill.cs.jetuml.application.UserPreferences.IntegerPreference;
 import ca.mcgill.cs.jetuml.diagram.Diagram;
 import ca.mcgill.cs.jetuml.diagram.DiagramType;
 import ca.mcgill.cs.jetuml.gui.tips.TipDialog;
@@ -81,6 +83,7 @@ public class EditorFrame extends BorderPane
 	private static final String KEY_LAST_SAVEAS_DIR = "lastSaveAsDir";
 	private static final String KEY_LAST_IMAGE_FORMAT = "lastImageFormat";
 	private static final String USER_MANUAL_URL = "https://www.jetuml.org/docs/user-guide.html";
+	private static final int FONT_SIZE_DELTA = 3;
 	
 	private static final String[] IMAGE_FORMATS = validFormats("png", "jpg", "gif", "bmp");
 	
@@ -241,7 +244,31 @@ public class EditorFrame extends BorderPane
 				factory.createMenuItem("view.diagram_size", false, event -> new DiagramSizeDialog(aMainStage).show()),
 				factory.createMenuItem("view.zoom_in", true, event -> getSelectedDiagramTab().zoomIn()),
 				factory.createMenuItem("view.zoom_out", true, event -> getSelectedDiagramTab().zoomOut()),
-				factory.createMenuItem("view.reset_zoom", true, event -> getSelectedDiagramTab().resetZoom())));
+				factory.createMenuItem("view.reset_zoom", true, event -> getSelectedDiagramTab().resetZoom()),
+				factory.createMenuItem("view.increase_text_size", true, event -> 
+				{
+					UserPreferences.instance().setInteger(
+						IntegerPreference.fontSize,
+						UserPreferences.instance().getInteger(IntegerPreference.fontSize) + FONT_SIZE_DELTA
+					);
+					getSelectedDiagramTab().repaint();
+				}),
+				factory.createMenuItem("view.decrease_text_size", true, event -> 
+				{
+					if (UserPreferences.instance().getInteger(IntegerPreference.fontSize) - FONT_SIZE_DELTA > 0 )
+					{
+						UserPreferences.instance().setInteger(
+							IntegerPreference.fontSize, 
+							UserPreferences.instance().getInteger(IntegerPreference.fontSize) - FONT_SIZE_DELTA);
+					}
+					getSelectedDiagramTab().repaint();						
+				}),
+				factory.createMenuItem("view.reset_text_size", true, event -> 
+				{
+					UserPreferences.instance().setInteger(IntegerPreference.fontSize, DEFAULT_FONT_SIZE);
+					getSelectedDiagramTab().repaint();
+				})
+			));
 	}
 	
 	private void createHelpMenu(MenuBar pMenuBar) 
