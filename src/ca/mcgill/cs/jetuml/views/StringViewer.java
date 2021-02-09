@@ -22,14 +22,11 @@ package ca.mcgill.cs.jetuml.views;
 
 import ca.mcgill.cs.jetuml.geom.Dimension;
 import ca.mcgill.cs.jetuml.geom.Rectangle;
-import javafx.geometry.Bounds;
 import javafx.geometry.VPos;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
-import javafx.scene.text.TextBoundsType;
 
 /**
  * A utility class to view strings with various decorations:
@@ -41,6 +38,7 @@ public final class StringViewer
 {
 	public static final Font FONT = Font.font("System", 12);
 	private static final Font FONT_BOLD = Font.font(FONT.getFamily(), FontWeight.BOLD, FONT.getSize());
+	private static final FontMetrics METRIC = new FontMetrics(FONT);
 	
 	private static final Dimension EMPTY = new Dimension(0, 0);
 	private static final int HORIZONTAL_TEXT_PADDING = 7;
@@ -98,35 +96,22 @@ public final class StringViewer
 		{
 			return EMPTY;
 		}
-		Bounds bounds = getLabel(pString).getLayoutBounds(); 
+		Rectangle bounds = METRIC.getBoundingBox(FONT, pString, aAlignment);
 		return new Dimension((int) Math.round(bounds.getWidth() + HORIZONTAL_TEXT_PADDING*2), 
 				(int) Math.round(bounds.getHeight() + VERTICAL_TEXT_PADDING*2));
 	}
 	
-	private Text getLabel(String pString)
-	{
-		Text label = new Text();
-		if (aUnderlined)
-		{
-			label.setUnderline(true);
-		}
-		label.setFont(getFont());
-		label.setBoundsType(TextBoundsType.VISUAL);
-		label.setText(pString);
-		
+	private TextAlignment getTextAlign()
+	{	
 		if(aAlignment == Align.LEFT)
 		{
-			label.setTextAlignment(TextAlignment.LEFT);
+			return TextAlignment.LEFT;
 		}
-		else if(aAlignment == Align.CENTER)
+		if(aAlignment == Align.CENTER)
 		{
-			label.setTextAlignment(TextAlignment.CENTER);
+			return TextAlignment.CENTER;
 		}
-		else if(aAlignment == Align.RIGHT) 
-		{
-			label.setTextAlignment(TextAlignment.RIGHT);
-		}
-		return label;
+		return TextAlignment.RIGHT;
 	}
 	
 	/**
@@ -137,11 +122,10 @@ public final class StringViewer
 	 */
 	public void draw(String pString, GraphicsContext pGraphics, Rectangle pRectangle)
 	{
-		Text label = getLabel(pString);
 		final VPos oldVPos = pGraphics.getTextBaseline();
 		final TextAlignment oldAlign = pGraphics.getTextAlign();
 		
-		pGraphics.setTextAlign(label.getTextAlignment());
+		pGraphics.setTextAlign(getTextAlign());
 		
 		int textX = 0;
 		int textY = 0;
@@ -164,11 +148,11 @@ public final class StringViewer
 		{
 			int xOffset = 0;
 			int yOffset = 0;
-			Bounds bounds = label.getLayoutBounds();
+			Rectangle bounds = METRIC.getBoundingBox(FONT, pString, aAlignment);
 			if(aAlignment == Align.CENTER)
 			{
 				xOffset = (int) (bounds.getWidth()/2);
-				yOffset = (int) (getFont().getSize()/2) + 1;
+				yOffset = (int) (METRIC.getLogicalHeight(FONT, pString)/2) + 1;
 			}
 			else if(aAlignment == Align.RIGHT)
 			{
