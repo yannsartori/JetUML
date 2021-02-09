@@ -20,7 +20,7 @@
  *******************************************************************************/
 package ca.mcgill.cs.jetuml.viewers.edges;
 
-import static ca.mcgill.cs.jetuml.views.StringViewer.FONT;
+import static ca.mcgill.cs.jetuml.views.StringViewer.getFont;
 
 import ca.mcgill.cs.jetuml.diagram.Edge;
 import ca.mcgill.cs.jetuml.diagram.edges.StateTransitionEdge;
@@ -70,7 +70,7 @@ public final class StateTransitionEdgeViewer extends AbstractEdgeViewer
 	// before centering the edge label on one side instead of in the center.
 	private static final int VERTICAL_TOLERANCE = 20; 
 
-	private Font aFont = FONT;
+	private Font aFont = getFont();
 	
 	@Override
 	public void draw(Edge pEdge, GraphicsContext pGraphics)
@@ -253,12 +253,12 @@ public final class StateTransitionEdgeViewer extends AbstractEdgeViewer
 		{
 			float difference = pEdge.getMiddleLabel().length() - MAX_LENGTH_FOR_NORMAL_FONT;
 			difference = difference / (2*pEdge.getMiddleLabel().length()); // damping
-			double newFontSize = Math.max(MIN_FONT_SIZE, (1-difference) * FONT.getSize());
+			double newFontSize = Math.max(MIN_FONT_SIZE, (1-difference) * getFont().getSize());
 			aFont = new Font(aFont.getName(), newFontSize);
 		}
 		else
 		{
-			aFont = FONT;
+			aFont = getFont();
 		}
 	}
 
