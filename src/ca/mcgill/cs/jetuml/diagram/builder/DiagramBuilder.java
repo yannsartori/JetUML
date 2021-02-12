@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import ca.mcgill.cs.jetuml.application.UserPreferences.SizeChangeHandler;
 import ca.mcgill.cs.jetuml.diagram.Diagram;
 import ca.mcgill.cs.jetuml.diagram.DiagramElement;
 import ca.mcgill.cs.jetuml.diagram.Edge;
@@ -60,7 +61,7 @@ import ca.mcgill.cs.jetuml.views.DiagramViewer;
  * created by methods of this class will change the state of the 
  * diagram.
  */
-public abstract class DiagramBuilder
+public abstract class DiagramBuilder implements SizeChangeHandler
 {
 	// Arbitrary default value, used to simplify the testing code
 	private static final int DEFAULT_DIMENSION = 1000;
@@ -530,5 +531,12 @@ public abstract class DiagramBuilder
 		Rectangle bounds = NodeViewerRegistry.getBounds(pNode);
 		Point position = computePosition(bounds, pRequestedPosition);
 		pNode.translate(position.getX() - bounds.getX(), position.getY() - bounds.getY());
+	}
+	
+	@Override
+	public void sizeChanged(int pHeight, int pWidth) 
+	{
+		setCanvasDimension(new Dimension(pWidth, pHeight));
+		
 	}
 }
