@@ -21,6 +21,7 @@
 
 package ca.mcgill.cs.jetuml.views;
 
+import java.util.List;
 import java.util.Optional;
 
 import ca.mcgill.cs.jetuml.diagram.Diagram;
@@ -198,5 +199,48 @@ public class DiagramViewer
 			return true;
 		}
 		return false;
+	}
+	
+	/**
+	 * Recursively scales the node positions who get cut off by the new dimensions
+	 * by the specified scale amount.
+	 * All other nodes remain unchanged.
+	 * @param pRootNodes All the root nodes in the diagram
+	 * @param pWidth The new width
+	 * @param pHeight The new height
+	 * @param pHeightScale The scaling factor for the height
+	 * @param pWidthScale The scaling factor for the width
+	 */
+	public void scalePositions(List<Node> pRootNodes, int pWidth, int pHeight, double pHeightScale, double pWidthScale)
+	{
+		pRootNodes.forEach(root -> scaleNodePosition(root, pWidth, pHeight, pHeightScale, pWidthScale));
+	}
+	
+	private void scaleNodePosition(Node pNode, int pWidth, int pHeight, double pHeightScale, double pWidthScale)
+	{
+		Point oldPosition = pNode.position();
+		Rectangle bounds = NodeViewerRegistry.getBounds(pNode);
+		Point newPosition = new Point((int) (oldPosition.getX()*pWidthScale), (int) (oldPosition.getY()*pHeightScale));
+		
+		if ( oldPosition.getX() + bounds.getWidth() < pWidth )
+		{
+			newPosition.setX(oldPosition.getX());
+		}
+		else if ( bounds.getWidth() + newPosition.getX() > pWidth )
+		{
+			newPosition.setX(pWidth - bounds.getWidth());
+		}
+		
+		if ( oldPosition.getY() + bounds.getHeight() < pHeight )
+		{
+			newPosition.setY(oldPosition.getY());
+		}
+		else if ( bounds.getHeight() + newPosition.getY() > pHeight )
+		{
+			newPosition.setY(pHeight - bounds.getHeight());
+		}
+		pNode.moveTo(newPosition);
+		pNode.getChildren().forEach(childNode -> scaleNodePosition(childNode, pWidth, pHeight, pHeightScale, pWidthScale));
+		
 	}
 }
