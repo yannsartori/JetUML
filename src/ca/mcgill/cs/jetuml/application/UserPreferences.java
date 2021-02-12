@@ -87,11 +87,25 @@ public final class UserPreferences
 		void preferenceChanged(BooleanPreference pPreference);
 	}
 	
+	/**
+	 * An object that can react to a change in the canvas size.
+	 */
+	public interface SizeChangeHandler
+	{
+		/**
+		 * Callback for change in the canvas size.
+		 * @param pHeight The height in the new dimension
+		 * @param pWidth The width in the new dimension
+		 */
+		void sizeChanged(int pHeight, int pWidth);
+	}
+	
 	private static final UserPreferences INSTANCE = new UserPreferences();
 	
 	private EnumMap<BooleanPreference, Boolean> aBooleanPreferences = new EnumMap<>(BooleanPreference.class);
 	private final List<BooleanPreferenceChangeHandler> aBooleanPreferenceChangeHandlers = new ArrayList<>();
 	private EnumMap<IntegerPreference, Integer> aIntegerPreferences = new EnumMap<>(IntegerPreference.class);
+	private final List<SizeChangeHandler> aSizeChangeHandlers = new ArrayList<>();
 	
 	private UserPreferences()
 	{
@@ -153,6 +167,14 @@ public final class UserPreferences
 	{
 		aIntegerPreferences.put(pPreference, pValue);
 		Preferences.userNodeForPackage(JetUML.class).put(pPreference.name(), Integer.toString(pValue));
+		if ( pPreference == IntegerPreference.diagramHeight || 
+			 pPreference == IntegerPreference.diagramWidth )
+		{
+			aSizeChangeHandlers.forEach(handler -> handler.sizeChanged(
+					getInteger(IntegerPreference.diagramHeight),
+					getInteger(IntegerPreference.diagramWidth)
+			));
+		}
 	}
 	
 	/**
@@ -164,6 +186,15 @@ public final class UserPreferences
 	public void addBooleanPreferenceChangeHandler(BooleanPreferenceChangeHandler pHandler)
 	{
 		aBooleanPreferenceChangeHandlers.add(pHandler);
+	}
+	
+	/**
+	 * Adds a handler for a size change.
+	 * @param pHandler A handler for a change in the size.
+	 */
+	public void addSizeChangeHandler(SizeChangeHandler pHandler)
+	{
+		aSizeChangeHandlers.add(pHandler);
 	}
 	
 	/**
