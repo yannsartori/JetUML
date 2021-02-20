@@ -27,7 +27,8 @@ import ca.mcgill.cs.jetuml.geom.Line;
 import ca.mcgill.cs.jetuml.geom.Point;
 import ca.mcgill.cs.jetuml.geom.Rectangle;
 import ca.mcgill.cs.jetuml.viewers.nodes.NodeViewerRegistry;
-import ca.mcgill.cs.jetuml.views.CanvasFont;
+import ca.mcgill.cs.jetuml.views.StringViewer;
+import ca.mcgill.cs.jetuml.views.StringViewer.Align;
 import ca.mcgill.cs.jetuml.views.ToolGraphics;
 import javafx.geometry.Bounds;
 import javafx.scene.canvas.GraphicsContext;
@@ -46,6 +47,7 @@ public abstract class AbstractEdgeViewer implements EdgeViewer
 	protected static final int OFFSET = 3;
 	
 	private static final int DEGREES_180 = 180;
+	private static final StringViewer SIZE_TESTER = new StringViewer(Align.CENTER, false, false);
 	
 	/**
 	 * The default behavior is to draw a straight line between
@@ -72,7 +74,7 @@ public abstract class AbstractEdgeViewer implements EdgeViewer
 	 */
 	protected static Dimension textDimensions( String pText )
 	{
-		return CanvasFont.instance().getDimension(pText);
+		return SIZE_TESTER.getDimension(pText);
 	}
 	
 	@Override

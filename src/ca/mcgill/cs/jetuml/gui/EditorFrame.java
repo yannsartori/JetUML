@@ -22,6 +22,7 @@
 package ca.mcgill.cs.jetuml.gui;
 
 import static ca.mcgill.cs.jetuml.application.ApplicationResources.RESOURCES;
+import static ca.mcgill.cs.jetuml.views.StringViewer.DEFAULT_FONT_SIZE;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -53,7 +54,6 @@ import ca.mcgill.cs.jetuml.gui.tips.TipDialog;
 import ca.mcgill.cs.jetuml.persistence.DeserializationException;
 import ca.mcgill.cs.jetuml.persistence.PersistenceService;
 import ca.mcgill.cs.jetuml.persistence.VersionedDiagram;
-import ca.mcgill.cs.jetuml.views.CanvasFont;
 import ca.mcgill.cs.jetuml.views.ImageCreator;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.control.Alert;
@@ -265,7 +265,7 @@ public class EditorFrame extends BorderPane
 				}),
 				factory.createMenuItem("view.reset_text_size", true, event -> 
 				{
-					UserPreferences.instance().setInteger(IntegerPreference.fontSize, CanvasFont.DEFAULT_FONT_SIZE);
+					UserPreferences.instance().setInteger(IntegerPreference.fontSize, DEFAULT_FONT_SIZE);
 					getSelectedDiagramTab().repaint();
 				})
 			));

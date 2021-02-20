@@ -21,6 +21,7 @@
 package ca.mcgill.cs.jetuml.gui;
 
 import static ca.mcgill.cs.jetuml.application.ApplicationResources.RESOURCES;
+import static ca.mcgill.cs.jetuml.views.StringViewer.DEFAULT_FONT_SIZE;
 
 import java.util.Optional;
 
@@ -37,7 +38,6 @@ import ca.mcgill.cs.jetuml.geom.Rectangle;
 import ca.mcgill.cs.jetuml.viewers.edges.EdgeViewerRegistry;
 import ca.mcgill.cs.jetuml.viewers.nodes.AbstractNodeViewer;
 import ca.mcgill.cs.jetuml.viewers.nodes.NodeViewerRegistry;
-import ca.mcgill.cs.jetuml.views.CanvasFont;
 import ca.mcgill.cs.jetuml.views.ToolGraphics;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
@@ -106,7 +106,7 @@ public class DiagramTabToolBar extends ToolBar implements BooleanPreferenceChang
 	private void installDiagramElementTools(Diagram pDiagram, ToggleGroup pToggleGroup)
 	{
 		final int oldFontSize = UserPreferences.instance().getInteger(IntegerPreference.fontSize);
-		UserPreferences.instance().setInteger(IntegerPreference.fontSize, CanvasFont.DEFAULT_FONT_SIZE);
+		UserPreferences.instance().setInteger(IntegerPreference.fontSize, DEFAULT_FONT_SIZE);
 		for( DiagramElement element : pDiagram.getPrototypes() )
 		{
 			SelectableToolButton button = new SelectableToolButton(

@@ -30,8 +30,8 @@ import ca.mcgill.cs.jetuml.geom.Point;
 import ca.mcgill.cs.jetuml.geom.Rectangle;
 import ca.mcgill.cs.jetuml.viewers.nodes.NodeViewerRegistry;
 import ca.mcgill.cs.jetuml.views.ArrowHead;
-import ca.mcgill.cs.jetuml.views.CanvasFont;
 import ca.mcgill.cs.jetuml.views.LineStyle;
+import ca.mcgill.cs.jetuml.views.StringViewer;
 import ca.mcgill.cs.jetuml.views.ToolGraphics;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
@@ -45,8 +45,6 @@ import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.QuadCurveTo;
 import javafx.scene.shape.Shape;
-import javafx.scene.text.Font;
-import javafx.scene.text.TextAlignment;
 
 /**
  * An edge view specialized for state transitions.
@@ -64,6 +62,7 @@ public final class StateTransitionEdgeViewer extends AbstractEdgeViewer
 	private static final double HEIGHT_RATIO = 3.5;
 //	private static final int MAX_LENGTH_FOR_NORMAL_FONT = 15;
 //	private static final int MIN_FONT_SIZE = 9;
+	private static final StringViewer STRING_VIEWER = new StringViewer(StringViewer.Align.CENTER, false, false);
 	
 	// The amount of vertical difference in connection points to tolerate
 	// before centering the edge label on one side instead of in the center.
@@ -111,21 +110,20 @@ public final class StateTransitionEdgeViewer extends AbstractEdgeViewer
 	 *  Draws the label.
 	 *  @param pGraphics2D the graphics context
 	 */
-	private void drawLabel(StateTransitionEdge pEdge, GraphicsContext pGraphics)
+	private void drawLabel(StateTransitionEdge pEdge, GraphicsContext pGraphics) 
 	{
 		//adjustLabelFont(pEdge);
 		Rectangle2D labelBounds = getLabelBounds(pEdge);
-		double x = labelBounds.getMinX();
-		double y = labelBounds.getMinY();
+		int x = (int) Math.round(labelBounds.getMinX());
+		int y = (int) Math.round(labelBounds.getMinY());
 		
 		Paint oldFill = pGraphics.getFill();
-		Font oldFont = pGraphics.getFont();
-		pGraphics.translate(x, y);
-		pGraphics.setTextAlign(TextAlignment.CENTER);
-		CanvasFont.instance().drawString(pGraphics, (int) labelBounds.getWidth()/2, 0, pEdge.getMiddleLabel(), false);
+		//Font oldFont = pGraphics.getFont();
+		pGraphics.setFill(Color.BLACK);
+		Dimension d = STRING_VIEWER.getDimension(pEdge.getMiddleLabel());
+		STRING_VIEWER.draw(pEdge.getMiddleLabel(), pGraphics, new Rectangle(x, y, d.width(), d.height()));
 		pGraphics.setFill(oldFill);
-		pGraphics.setFont(oldFont);
-		pGraphics.translate(-x, -y);        
+		//pGraphics.setFont(oldFont);     
 	}
 	
 	private void drawSelfEdge(Edge pEdge, GraphicsContext pGraphics)

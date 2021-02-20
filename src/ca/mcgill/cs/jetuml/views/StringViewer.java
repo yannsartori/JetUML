@@ -20,10 +20,17 @@
  *******************************************************************************/
 package ca.mcgill.cs.jetuml.views;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import ca.mcgill.cs.jetuml.application.UserPreferences;
+import ca.mcgill.cs.jetuml.application.UserPreferences.IntegerPreference;
 import ca.mcgill.cs.jetuml.geom.Dimension;
 import ca.mcgill.cs.jetuml.geom.Rectangle;
 import javafx.geometry.VPos;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 
 /**
@@ -34,9 +41,11 @@ import javafx.scene.text.TextAlignment;
  */
 public final class StringViewer
 {
+	public static final int DEFAULT_FONT_SIZE = 12;
 	private static final Dimension EMPTY = new Dimension(0, 0);
 	private static final int HORIZONTAL_TEXT_PADDING = 7;
 	private static final int VERTICAL_TEXT_PADDING = 7;
+	private static final CanvasFont CANVAS_FONT_INSTANCE = new CanvasFont();
 	
 	/**
 	 * How to align the text in this string.
@@ -78,7 +87,7 @@ public final class StringViewer
 		{
 			return EMPTY;
 		}
-		Dimension dimension = CanvasFont.instance().getDimension(pString);
+		Dimension dimension = CANVAS_FONT_INSTANCE.getDimension(pString);
 		return new Dimension(Math.round(dimension.width() + HORIZONTAL_TEXT_PADDING*2), 
 				Math.round(dimension.height() + VERTICAL_TEXT_PADDING*2));
 	}
@@ -124,17 +133,17 @@ public final class StringViewer
 		}
 		
 		pGraphics.translate(pRectangle.getX(), pRectangle.getY());
-		CanvasFont.instance().drawString(pGraphics, textX, textY, pString, aBold);
+		CANVAS_FONT_INSTANCE.drawString(pGraphics, textX, textY, pString, aBold);
 		
 		if(aUnderlined && pString.trim().length() > 0)
 		{
 			int xOffset = 0;
 			int yOffset = 0;
-			Dimension dimension = CanvasFont.instance().getDimension(pString);
+			Dimension dimension = CANVAS_FONT_INSTANCE.getDimension(pString);
 			if(aAlignment == Align.CENTER)
 			{
 				xOffset = dimension.width()/2;
-				yOffset = (int) (CanvasFont.instance().fontSize()/2) + 1;
+				yOffset = (int) (CANVAS_FONT_INSTANCE.fontSize()/2) + 1;
 			}
 			else if(aAlignment == Align.RIGHT)
 			{
@@ -147,5 +156,78 @@ public final class StringViewer
 		pGraphics.translate(-pRectangle.getX(), -pRectangle.getY());
 		pGraphics.setTextBaseline(oldVPos);
 		pGraphics.setTextAlign(oldAlign);
+	}
+	
+	private static final class CanvasFont
+	{
+		private final Map<Integer, Map<Boolean, Font>> aFontStore;
+		private final Map<Font, FontMetrics> aFontMetricsStore;
+		
+		private CanvasFont() 
+		{
+			aFontStore = new HashMap<>();
+			aFontMetricsStore = new HashMap<>();
+		}
+		
+		private Font getFont(boolean pBold)
+		{
+			int fontSize = UserPreferences.instance().getInteger(IntegerPreference.fontSize);
+			FontWeight fontWeight;
+			if ( pBold )
+			{
+				fontWeight = FontWeight.BOLD;
+			}
+			else
+			{
+				fontWeight = FontWeight.NORMAL;
+			}
+			aFontStore.putIfAbsent(fontSize, new HashMap<>());
+			return aFontStore.get(fontSize).computeIfAbsent(pBold, k -> Font.font("System", fontWeight, fontSize));
+		}
+		
+		private FontMetrics getFontMetrics(boolean pBold)
+		{
+			Font font = getFont(pBold);
+			return aFontMetricsStore.computeIfAbsent(font, k -> new FontMetrics(font));
+		}
+		
+		/**
+		 * Returns the dimension of a given string.
+		 * @param pString The string to which the bounds pertain.
+		 * @return The dimension of the string
+		 */
+		public Dimension getDimension(String pString)
+		{
+			return getFontMetrics(false).getDimension(pString);
+		}
+		
+		/**
+		 * Draws the string on the graphics context at the specified position.
+		 * @param pGraphics The graphics context
+		 * @param pTextX The x-position of the string
+		 * @param pTextY The y-position of the string
+		 * @param pString The canvas on which to draw the string
+		 * @param pBold If the text should be bold
+		 */
+		public void drawString(GraphicsContext pGraphics, int pTextX, int pTextY, 
+				String pString, boolean pBold)
+		{
+			ViewUtils.drawText(pGraphics, pTextX, pTextY, pString, getFont(pBold));
+		}
+		
+		/**
+		 * Returns the font size the user currently specifies.
+		 * @return The font size
+		 */
+		public int fontSize()
+		{
+			 /* Note: This is technically an unnecessary method since
+			  * the calling methods can just directly access the UserPreferences
+			  * instance. However, I thought it makes sense to have all possible
+			  * operations relating to fonts here
+			  * Should I remove this method?
+			  */
+			return UserPreferences.instance().getInteger(IntegerPreference.fontSize);
+		}
 	}
 }

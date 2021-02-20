@@ -4,7 +4,7 @@ import static ca.mcgill.cs.jetuml.testutils.GeometryUtils.osDependent;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-import static ca.mcgill.cs.jetuml.views.CanvasFont.DEFAULT_FONT_SIZE;
+import static ca.mcgill.cs.jetuml.views.StringViewer.DEFAULT_FONT_SIZE;
 
 import java.util.stream.Stream;
 
