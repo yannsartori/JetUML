@@ -20,8 +20,6 @@
  *******************************************************************************/
 package ca.mcgill.cs.jetuml.viewers.edges;
 
-import static ca.mcgill.cs.jetuml.views.StringViewer.FONT;
-
 import ca.mcgill.cs.jetuml.diagram.Edge;
 import ca.mcgill.cs.jetuml.geom.Dimension;
 import ca.mcgill.cs.jetuml.geom.Direction;
@@ -29,7 +27,7 @@ import ca.mcgill.cs.jetuml.geom.Line;
 import ca.mcgill.cs.jetuml.geom.Point;
 import ca.mcgill.cs.jetuml.geom.Rectangle;
 import ca.mcgill.cs.jetuml.viewers.nodes.NodeViewerRegistry;
-import ca.mcgill.cs.jetuml.views.FontMetrics;
+import ca.mcgill.cs.jetuml.views.CanvasFont;
 import ca.mcgill.cs.jetuml.views.ToolGraphics;
 import javafx.geometry.Bounds;
 import javafx.scene.canvas.GraphicsContext;
@@ -46,7 +44,6 @@ public abstract class AbstractEdgeViewer implements EdgeViewer
 	protected static final int MAX_DISTANCE = 3;
 	protected static final int BUTTON_SIZE = 25;
 	protected static final int OFFSET = 3;
-	private static final FontMetrics SIZE_TESTER = new FontMetrics(FONT);
 	
 	private static final int DEGREES_180 = 180;
 	
@@ -75,7 +72,7 @@ public abstract class AbstractEdgeViewer implements EdgeViewer
 	 */
 	protected static Dimension textDimensions( String pText )
 	{
-		return SIZE_TESTER.getDimension(pText);
+		return CanvasFont.instance().getDimension(pText);
 	}
 	
 	@Override

@@ -279,6 +279,14 @@ public class DiagramTab extends Tab implements MouseDraggedGestureHandler, KeyEv
 		setTitle();
 	}
 
+	/**
+	 * Repaints the diagram tab.
+	 */
+	public void repaint()
+	{
+		aDiagramCanvas.paintPanel();
+	}
+
 	@Override
 	public void interactionTo(Point pTo)
 	{

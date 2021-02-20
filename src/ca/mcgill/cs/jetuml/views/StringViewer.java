@@ -24,8 +24,6 @@ import ca.mcgill.cs.jetuml.geom.Dimension;
 import ca.mcgill.cs.jetuml.geom.Rectangle;
 import javafx.geometry.VPos;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 
 /**
@@ -36,11 +34,6 @@ import javafx.scene.text.TextAlignment;
  */
 public final class StringViewer
 {
-	public static final Font FONT = Font.font("System", 12);
-	private static final Font FONT_BOLD = Font.font(FONT.getFamily(), FontWeight.BOLD, FONT.getSize());
-	private static final FontMetrics FONT_METRICS = new FontMetrics(FONT);
-	private static final FontMetrics FONT_BOLD_METRICS = new FontMetrics(FONT_BOLD);
-	
 	private static final Dimension EMPTY = new Dimension(0, 0);
 	private static final int HORIZONTAL_TEXT_PADDING = 7;
 	private static final int VERTICAL_TEXT_PADDING = 7;
@@ -71,27 +64,6 @@ public final class StringViewer
 		aUnderlined = pUnderlined;
 	}
 	
-	private Font getFont()
-	{
-		if( aBold )
-		{
-			return FONT_BOLD;
-		}
-		else
-		{
-			return FONT;
-		}
-	}
-	
-	private FontMetrics getFontMetrics()
-	{
-		if ( aBold )
-		{
-			return FONT_BOLD_METRICS;
-		}
-		return FONT_METRICS;
-	}
-	
 	/**
      * Gets the width and height required to show pString, including
      * padding around the string.
@@ -106,7 +78,7 @@ public final class StringViewer
 		{
 			return EMPTY;
 		}
-		Dimension dimension = getFontMetrics().getDimension(pString);
+		Dimension dimension = CanvasFont.instance().getDimension(pString);
 		return new Dimension(Math.round(dimension.width() + HORIZONTAL_TEXT_PADDING*2), 
 				Math.round(dimension.height() + VERTICAL_TEXT_PADDING*2));
 	}
@@ -152,17 +124,17 @@ public final class StringViewer
 		}
 		
 		pGraphics.translate(pRectangle.getX(), pRectangle.getY());
-		ViewUtils.drawText(pGraphics, textX, textY, pString.trim(), getFont());
+		CanvasFont.instance().drawString(pGraphics, textX, textY, pString, aBold);
 		
 		if(aUnderlined && pString.trim().length() > 0)
 		{
 			int xOffset = 0;
 			int yOffset = 0;
-			Dimension dimension = getFontMetrics().getDimension(pString);
+			Dimension dimension = CanvasFont.instance().getDimension(pString);
 			if(aAlignment == Align.CENTER)
 			{
 				xOffset = dimension.width()/2;
-				yOffset = (int) (getFont().getSize()/2) + 1;
+				yOffset = (int) (CanvasFont.instance().fontSize()/2) + 1;
 			}
 			else if(aAlignment == Align.RIGHT)
 			{

@@ -20,8 +20,6 @@
  *******************************************************************************/
 package ca.mcgill.cs.jetuml.viewers.edges;
 
-import static ca.mcgill.cs.jetuml.views.StringViewer.FONT;
-
 import ca.mcgill.cs.jetuml.diagram.Edge;
 import ca.mcgill.cs.jetuml.diagram.edges.StateTransitionEdge;
 import ca.mcgill.cs.jetuml.geom.Conversions;
@@ -32,6 +30,7 @@ import ca.mcgill.cs.jetuml.geom.Point;
 import ca.mcgill.cs.jetuml.geom.Rectangle;
 import ca.mcgill.cs.jetuml.viewers.nodes.NodeViewerRegistry;
 import ca.mcgill.cs.jetuml.views.ArrowHead;
+import ca.mcgill.cs.jetuml.views.CanvasFont;
 import ca.mcgill.cs.jetuml.views.LineStyle;
 import ca.mcgill.cs.jetuml.views.ToolGraphics;
 import javafx.geometry.Point2D;
@@ -63,14 +62,12 @@ public final class StateTransitionEdgeViewer extends AbstractEdgeViewer
 	
 	private static final int RADIANS_TO_PIXELS = 10;
 	private static final double HEIGHT_RATIO = 3.5;
-	private static final int MAX_LENGTH_FOR_NORMAL_FONT = 15;
-	private static final int MIN_FONT_SIZE = 9;
+//	private static final int MAX_LENGTH_FOR_NORMAL_FONT = 15;
+//	private static final int MIN_FONT_SIZE = 9;
 	
 	// The amount of vertical difference in connection points to tolerate
 	// before centering the edge label on one side instead of in the center.
 	private static final int VERTICAL_TOLERANCE = 20; 
-
-	private Font aFont = FONT;
 	
 	@Override
 	public void draw(Edge pEdge, GraphicsContext pGraphics)
@@ -116,7 +113,7 @@ public final class StateTransitionEdgeViewer extends AbstractEdgeViewer
 	 */
 	private void drawLabel(StateTransitionEdge pEdge, GraphicsContext pGraphics)
 	{
-		adjustLabelFont(pEdge);
+		//adjustLabelFont(pEdge);
 		Rectangle2D labelBounds = getLabelBounds(pEdge);
 		double x = labelBounds.getMinX();
 		double y = labelBounds.getMinY();
@@ -124,10 +121,8 @@ public final class StateTransitionEdgeViewer extends AbstractEdgeViewer
 		Paint oldFill = pGraphics.getFill();
 		Font oldFont = pGraphics.getFont();
 		pGraphics.translate(x, y);
-		pGraphics.setFill(Color.BLACK);
-		pGraphics.setFont(aFont);
 		pGraphics.setTextAlign(TextAlignment.CENTER);
-		pGraphics.fillText(pEdge.getMiddleLabel(), labelBounds.getWidth()/2, 0);
+		CanvasFont.instance().drawString(pGraphics, (int) labelBounds.getWidth()/2, 0, pEdge.getMiddleLabel(), false);
 		pGraphics.setFill(oldFill);
 		pGraphics.setFont(oldFont);
 		pGraphics.translate(-x, -y);        
@@ -180,7 +175,7 @@ public final class StateTransitionEdgeViewer extends AbstractEdgeViewer
 		double x = control.getX() / 2 + line.getX1() / 4 + line.getX2() / 4;
 		double y = control.getY() / 2 + line.getY1() / 4 + line.getY2() / 4;
 
-		adjustLabelFont(pEdge);
+		//adjustLabelFont(pEdge);
 		Dimension textDimensions = getLabelBounds(pEdge.getMiddleLabel());
 
 		int gap = 3;
@@ -233,7 +228,7 @@ public final class StateTransitionEdgeViewer extends AbstractEdgeViewer
 	private Rectangle2D getSelfEdgeLabelBounds(StateTransitionEdge pEdge)
 	{
 		Line line = getConnectionPoints(pEdge);
-		adjustLabelFont(pEdge);
+		//adjustLabelFont(pEdge);
 		Dimension textDimensions = getLabelBounds(pEdge.getMiddleLabel());
 		if( getPosition(pEdge) == 1 )
 		{
@@ -247,20 +242,20 @@ public final class StateTransitionEdgeViewer extends AbstractEdgeViewer
 		}
 	}   
 	
-	private void adjustLabelFont(StateTransitionEdge pEdge)
-	{
-		if(pEdge.getMiddleLabel().length() > MAX_LENGTH_FOR_NORMAL_FONT)
-		{
-			float difference = pEdge.getMiddleLabel().length() - MAX_LENGTH_FOR_NORMAL_FONT;
-			difference = difference / (2*pEdge.getMiddleLabel().length()); // damping
-			double newFontSize = Math.max(MIN_FONT_SIZE, (1-difference) * FONT.getSize());
-			aFont = new Font(aFont.getName(), newFontSize);
-		}
-		else
-		{
-			aFont = FONT;
-		}
-	}
+//	private int adjustedLabelFont(StateTransitionEdge pEdge)
+//	{
+//		if(pEdge.getMiddleLabel().length() > MAX_LENGTH_FOR_NORMAL_FONT)
+//		{
+//			float difference = pEdge.getMiddleLabel().length() - MAX_LENGTH_FOR_NORMAL_FONT;
+//			difference = difference / (2*pEdge.getMiddleLabel().length()); // damping
+//			int newFontSize = (int) Math.max(MIN_FONT_SIZE, (1-difference) * CanvasFont.instance().fontSize());
+//			return newFontSize;
+//		}
+//		else
+//		{
+//			aFont = FONT;
+//		}
+//	}
 
 	@Override
 	protected Shape getShape(Edge pEdge)

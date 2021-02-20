@@ -59,7 +59,7 @@ public final class UserPreferences
 	 */
 	public enum IntegerPreference
 	{
-		diagramWidth(0), diagramHeight(0), nextTipId(1);
+		diagramWidth(0), diagramHeight(0), nextTipId(1), fontSize(12);
 		
 		private int aDefault;
 		

@@ -27,6 +27,7 @@ import java.util.Optional;
 import ca.mcgill.cs.jetuml.application.UserPreferences;
 import ca.mcgill.cs.jetuml.application.UserPreferences.BooleanPreference;
 import ca.mcgill.cs.jetuml.application.UserPreferences.BooleanPreferenceChangeHandler;
+import ca.mcgill.cs.jetuml.application.UserPreferences.IntegerPreference;
 import ca.mcgill.cs.jetuml.diagram.Diagram;
 import ca.mcgill.cs.jetuml.diagram.DiagramElement;
 import ca.mcgill.cs.jetuml.diagram.Edge;
@@ -36,6 +37,7 @@ import ca.mcgill.cs.jetuml.geom.Rectangle;
 import ca.mcgill.cs.jetuml.viewers.edges.EdgeViewerRegistry;
 import ca.mcgill.cs.jetuml.viewers.nodes.AbstractNodeViewer;
 import ca.mcgill.cs.jetuml.viewers.nodes.NodeViewerRegistry;
+import ca.mcgill.cs.jetuml.views.CanvasFont;
 import ca.mcgill.cs.jetuml.views.ToolGraphics;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
@@ -103,6 +105,8 @@ public class DiagramTabToolBar extends ToolBar implements BooleanPreferenceChang
 	
 	private void installDiagramElementTools(Diagram pDiagram, ToggleGroup pToggleGroup)
 	{
+		final int oldFontSize = UserPreferences.instance().getInteger(IntegerPreference.fontSize);
+		UserPreferences.instance().setInteger(IntegerPreference.fontSize, CanvasFont.DEFAULT_FONT_SIZE);
 		for( DiagramElement element : pDiagram.getPrototypes() )
 		{
 			SelectableToolButton button = new SelectableToolButton(
@@ -112,6 +116,7 @@ public class DiagramTabToolBar extends ToolBar implements BooleanPreferenceChang
 			UserPreferences.instance().addBooleanPreferenceChangeHandler(button);
 			add(button, createIcon(element), Prototypes.instance().tooltip(element, false));
 		}
+		UserPreferences.instance().setInteger(IntegerPreference.fontSize, oldFontSize);
 	}
 	
 	private static Canvas createIcon( DiagramElement pElement )
