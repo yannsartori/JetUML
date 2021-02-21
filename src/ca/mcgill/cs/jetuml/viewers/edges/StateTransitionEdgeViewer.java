@@ -60,8 +60,8 @@ public final class StateTransitionEdgeViewer extends AbstractEdgeViewer
 	
 	private static final int RADIANS_TO_PIXELS = 10;
 	private static final double HEIGHT_RATIO = 3.5;
-//	private static final int MAX_LENGTH_FOR_NORMAL_FONT = 15;
-//	private static final int MIN_FONT_SIZE = 9;
+	private static final int MAX_LENGTH_FOR_NORMAL_FONT = 15;
+	private static final double MIN_FONT_SCALE = 0.75; // before it was font size 12 => font size 9
 	private static final StringViewer STRING_VIEWER = new StringViewer(StringViewer.Align.CENTER, false, false);
 	
 	// The amount of vertical difference in connection points to tolerate
@@ -112,18 +112,16 @@ public final class StateTransitionEdgeViewer extends AbstractEdgeViewer
 	 */
 	private void drawLabel(StateTransitionEdge pEdge, GraphicsContext pGraphics) 
 	{
-		//adjustLabelFont(pEdge);
+		double fontScale = adjustedLabelFontScale(pEdge);
 		Rectangle2D labelBounds = getLabelBounds(pEdge);
 		int x = (int) Math.round(labelBounds.getMinX());
 		int y = (int) Math.round(labelBounds.getMinY());
 		
 		Paint oldFill = pGraphics.getFill();
-		//Font oldFont = pGraphics.getFont();
 		pGraphics.setFill(Color.BLACK);
-		Dimension d = STRING_VIEWER.getDimension(pEdge.getMiddleLabel());
-		STRING_VIEWER.draw(pEdge.getMiddleLabel(), pGraphics, new Rectangle(x, y, d.width(), d.height()));
-		pGraphics.setFill(oldFill);
-		//pGraphics.setFont(oldFont);     
+		Dimension d = STRING_VIEWER.getDimension(pEdge.getMiddleLabel(), fontScale);
+		STRING_VIEWER.draw(pEdge.getMiddleLabel(), pGraphics, new Rectangle(x, y, d.width(), d.height()), fontScale);
+		pGraphics.setFill(oldFill); 
 	}
 	
 	private void drawSelfEdge(Edge pEdge, GraphicsContext pGraphics)
@@ -151,15 +149,16 @@ public final class StateTransitionEdgeViewer extends AbstractEdgeViewer
 	/**
      * Gets the dimensions for pString.
      * @param pString The input string. Can be null.
+     * @param pFontScale The amount by which to scale the font.
      * @return The dimensions of the string.
 	 */
-	public Dimension getLabelBounds(String pString)
+	public Dimension getLabelBounds(String pString, double pFontScale)
 	{
 		if(pString == null || pString.length() == 0) 
 		{
 			return Dimension.NULL;
 		}
-		return textDimensions(pString);
+		return STRING_VIEWER.getDimension(pString, pFontScale);
 	}
 	
 	/*
@@ -173,8 +172,8 @@ public final class StateTransitionEdgeViewer extends AbstractEdgeViewer
 		double x = control.getX() / 2 + line.getX1() / 4 + line.getX2() / 4;
 		double y = control.getY() / 2 + line.getY1() / 4 + line.getY2() / 4;
 
-		//adjustLabelFont(pEdge);
-		Dimension textDimensions = getLabelBounds(pEdge.getMiddleLabel());
+		double fontScale = adjustedLabelFontScale(pEdge);
+		Dimension textDimensions = getLabelBounds(pEdge.getMiddleLabel(), fontScale);
 
 		int gap = 3;
 		if( line.getY1() >= line.getY2() - VERTICAL_TOLERANCE && 
@@ -226,8 +225,8 @@ public final class StateTransitionEdgeViewer extends AbstractEdgeViewer
 	private Rectangle2D getSelfEdgeLabelBounds(StateTransitionEdge pEdge)
 	{
 		Line line = getConnectionPoints(pEdge);
-		//adjustLabelFont(pEdge);
-		Dimension textDimensions = getLabelBounds(pEdge.getMiddleLabel());
+		double fontScale = adjustedLabelFontScale(pEdge);
+		Dimension textDimensions = getLabelBounds(pEdge.getMiddleLabel(), fontScale);
 		if( getPosition(pEdge) == 1 )
 		{
 			return new Rectangle2D(line.getX1() + SELF_EDGE_OFFSET - textDimensions.width()/2,	
@@ -240,20 +239,17 @@ public final class StateTransitionEdgeViewer extends AbstractEdgeViewer
 		}
 	}   
 	
-//	private int adjustedLabelFont(StateTransitionEdge pEdge)
-//	{
-//		if(pEdge.getMiddleLabel().length() > MAX_LENGTH_FOR_NORMAL_FONT)
-//		{
-//			float difference = pEdge.getMiddleLabel().length() - MAX_LENGTH_FOR_NORMAL_FONT;
-//			difference = difference / (2*pEdge.getMiddleLabel().length()); // damping
-//			int newFontSize = (int) Math.max(MIN_FONT_SIZE, (1-difference) * CanvasFont.instance().fontSize());
-//			return newFontSize;
-//		}
-//		else
-//		{
-//			aFont = FONT;
-//		}
-//	}
+	private double adjustedLabelFontScale(StateTransitionEdge pEdge)
+	{
+		double fontScale = 1;
+		if(pEdge.getMiddleLabel().length() > MAX_LENGTH_FOR_NORMAL_FONT)
+		{
+			float difference = pEdge.getMiddleLabel().length() - MAX_LENGTH_FOR_NORMAL_FONT;
+			difference = difference / (2*pEdge.getMiddleLabel().length()); // damping
+			fontScale = Math.max(MIN_FONT_SCALE, 1-difference);
+		}
+		return fontScale;
+	}
 
 	@Override
 	protected Shape getShape(Edge pEdge)

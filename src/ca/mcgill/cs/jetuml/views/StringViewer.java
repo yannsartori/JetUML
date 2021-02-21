@@ -82,12 +82,25 @@ public final class StringViewer
 	 */
 	public Dimension getDimension(String pString)
 	{
+		return getDimension(pString, 1);
+	}
+	
+	/**
+     * Gets the width and height required to show pString, including
+     * padding around the string, where the current font is scaled.
+     * @param pString The input string. 
+     * @param pFontScale The amount by which to scale the font
+     * @return The dimension pString will use on the screen.
+     * @pre pString != null.
+	 */
+	public Dimension getDimension(String pString, double pFontScale)
+	{
 		assert pString != null;
 		if(pString.length() == 0) 
 		{
 			return EMPTY;
 		}
-		Dimension dimension = CANVAS_FONT_INSTANCE.getDimension(pString);
+		Dimension dimension = CANVAS_FONT_INSTANCE.getDimension(pString, pFontScale);
 		return new Dimension(Math.round(dimension.width() + HORIZONTAL_TEXT_PADDING*2), 
 				Math.round(dimension.height() + VERTICAL_TEXT_PADDING*2));
 	}
@@ -106,12 +119,24 @@ public final class StringViewer
 	}
 	
 	/**
-     * Draws the string inside a given rectangle.
+     * Draws the string inside a given rectangle with the current specified font.
      * @param pString The string to draw.
      * @param pGraphics the graphics context
      * @param pRectangle the rectangle into which to place the string
 	 */
 	public void draw(String pString, GraphicsContext pGraphics, Rectangle pRectangle)
+	{
+		draw(pString, pGraphics, pRectangle, 1.0);
+	}
+	
+	/**
+     * Draws the string inside a given rectangle with the current specified font scaled.
+     * @param pString The string to draw.
+     * @param pGraphics the graphics context
+     * @param pRectangle the rectangle into which to place the string
+     * @param pFontScale the amount by which to scale the font
+	 */
+	public void draw(String pString, GraphicsContext pGraphics, Rectangle pRectangle, double pFontScale)
 	{
 		final VPos oldVPos = pGraphics.getTextBaseline();
 		final TextAlignment oldAlign = pGraphics.getTextAlign();
@@ -133,17 +158,17 @@ public final class StringViewer
 		}
 		
 		pGraphics.translate(pRectangle.getX(), pRectangle.getY());
-		CANVAS_FONT_INSTANCE.drawString(pGraphics, textX, textY, pString, aBold);
+		CANVAS_FONT_INSTANCE.drawString(pGraphics, textX, textY, pString, aBold, pFontScale);
 		
 		if(aUnderlined && pString.trim().length() > 0)
 		{
 			int xOffset = 0;
 			int yOffset = 0;
-			Dimension dimension = CANVAS_FONT_INSTANCE.getDimension(pString);
+			Dimension dimension = CANVAS_FONT_INSTANCE.getDimension(pString, pFontScale);
 			if(aAlignment == Align.CENTER)
 			{
 				xOffset = dimension.width()/2;
-				yOffset = (int) (CANVAS_FONT_INSTANCE.fontSize()/2) + 1;
+				yOffset = (int) (CANVAS_FONT_INSTANCE.fontSize()*pFontScale/2) + 1;
 			}
 			else if(aAlignment == Align.RIGHT)
 			{
@@ -169,9 +194,9 @@ public final class StringViewer
 			aFontMetricsStore = new HashMap<>();
 		}
 		
-		private Font getFont(boolean pBold)
+		private Font getFont(boolean pBold, double pFontScale)
 		{
-			int fontSize = UserPreferences.instance().getInteger(IntegerPreference.fontSize);
+			int fontSize = (int) Math.round(UserPreferences.instance().getInteger(IntegerPreference.fontSize) * pFontScale);
 			FontWeight fontWeight;
 			if ( pBold )
 			{
@@ -185,34 +210,41 @@ public final class StringViewer
 			return aFontStore.get(fontSize).computeIfAbsent(pBold, k -> Font.font("System", fontWeight, fontSize));
 		}
 		
-		private FontMetrics getFontMetrics(boolean pBold)
+		private FontMetrics getFontMetrics(boolean pBold, double pFontScale)
 		{
-			Font font = getFont(pBold);
+			Font font = getFont(pBold, pFontScale);
 			return aFontMetricsStore.computeIfAbsent(font, k -> new FontMetrics(font));
 		}
 		
 		/**
 		 * Returns the dimension of a given string.
 		 * @param pString The string to which the bounds pertain.
+		 * @param pFontScale The amount to scale the font by
 		 * @return The dimension of the string
+		 * @pre pFontScale >= 0
 		 */
-		public Dimension getDimension(String pString)
+		public Dimension getDimension(String pString, double pFontScale)
 		{
-			return getFontMetrics(false).getDimension(pString);
+			assert pFontScale >= 0;
+			return getFontMetrics(false, pFontScale).getDimension(pString);
 		}
 		
 		/**
-		 * Draws the string on the graphics context at the specified position.
+		 * Draws the string on the graphics context at the specified position with
+		 * the current specified font scaled.
 		 * @param pGraphics The graphics context
 		 * @param pTextX The x-position of the string
 		 * @param pTextY The y-position of the string
 		 * @param pString The canvas on which to draw the string
 		 * @param pBold If the text should be bold
+		 * @param pFontScale The amount by which to scale the font
+		 * @pre pFontScale >= 0
 		 */
 		public void drawString(GraphicsContext pGraphics, int pTextX, int pTextY, 
-				String pString, boolean pBold)
+				String pString, boolean pBold, double pFontScale)
 		{
-			ViewUtils.drawText(pGraphics, pTextX, pTextY, pString, getFont(pBold));
+			assert pFontScale >=0;
+			ViewUtils.drawText(pGraphics, pTextX, pTextY, pString, getFont(pBold, pFontScale));
 		}
 		
 		/**
