@@ -53,8 +53,10 @@ import javafx.scene.shape.Shape;
  */
 public final class CallEdgeViewer extends AbstractEdgeViewer
 {	
-	private static final StringViewer CENTERED_STRING_VIEWER = new StringViewer(StringViewer.Align.CENTER, false, false);
-	private static final StringViewer LEFT_JUSTIFIED_STRING_VIEWER = new StringViewer(StringViewer.Align.LEFT, false, false);
+	private static final StringViewer CENTERED_STRING_VIEWER = new StringViewer(StringViewer.VerticalAlign.CENTER, 
+			StringViewer.HorizontalAlign.CENTER, false, false, true);
+	private static final StringViewer LEFT_JUSTIFIED_STRING_VIEWER = new StringViewer(StringViewer.VerticalAlign.TOP, 
+			StringViewer.HorizontalAlign.LEFT, false, false, true);
 
 	private static final int SHIFT = -10;
 	

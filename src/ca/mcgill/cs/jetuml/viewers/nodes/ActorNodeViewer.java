@@ -38,7 +38,8 @@ import javafx.scene.shape.QuadCurveTo;
  */
 public final class ActorNodeViewer extends AbstractNodeViewer
 {
-	private static final StringViewer NAME_VIEWER = new StringViewer(StringViewer.Align.CENTER, false, false);
+	private static final StringViewer NAME_VIEWER = new StringViewer(StringViewer.VerticalAlign.CENTER, 
+			StringViewer.HorizontalAlign.CENTER, false, false, true);
 	
 	private static final int PADDING = 4;
 	private static final int HEAD_SIZE = 16;

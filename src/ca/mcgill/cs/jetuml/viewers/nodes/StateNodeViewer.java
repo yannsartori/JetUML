@@ -38,7 +38,8 @@ public final class StateNodeViewer extends AbstractNodeViewer
 {
 	private static final int DEFAULT_WIDTH = 80;
 	private static final int DEFAULT_HEIGHT = 60;
-	private static final StringViewer NAME_VIEWER = new StringViewer(StringViewer.Align.CENTER, false, false);
+	private static final StringViewer NAME_VIEWER = new StringViewer(StringViewer.VerticalAlign.CENTER, 
+			StringViewer.HorizontalAlign.CENTER, false, false, true);
 	
 	@Override
 	public void draw(Node pNode, GraphicsContext pGraphics)

@@ -39,7 +39,8 @@ public final class UseCaseNodeViewer extends AbstractNodeViewer
 	private static final int DEFAULT_WIDTH = 110;
 	private static final int DEFAULT_HEIGHT = 40;
 	private static final int HORIZONTAL_NAME_PADDING = 30;
-	private static final StringViewer NAME_VIEWER = new StringViewer(StringViewer.Align.CENTER, false, false);
+	private static final StringViewer NAME_VIEWER = new StringViewer(StringViewer.VerticalAlign.CENTER, 
+			StringViewer.HorizontalAlign.CENTER, false, false, true);
 	
 	@Override
 	public void draw(Node pNode, GraphicsContext pGraphics)

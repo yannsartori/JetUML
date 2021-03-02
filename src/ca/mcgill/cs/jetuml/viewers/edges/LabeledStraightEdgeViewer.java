@@ -36,7 +36,8 @@ import javafx.scene.canvas.GraphicsContext;
  */
 public class LabeledStraightEdgeViewer extends StraightEdgeViewer
 {	
-	private static final StringViewer STRING_VIEWER = new StringViewer(StringViewer.Align.CENTER, false, false);
+	private static final StringViewer STRING_VIEWER = new StringViewer(StringViewer.VerticalAlign.CENTER, StringViewer.HorizontalAlign.CENTER, 
+			false, false, true);
 	private static final int SHIFT = -10;
 	
 	private final Function<Edge, String> aLabelExtractor;

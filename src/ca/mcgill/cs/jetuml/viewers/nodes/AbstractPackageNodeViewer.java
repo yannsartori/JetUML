@@ -43,7 +43,8 @@ public abstract class AbstractPackageNodeViewer extends AbstractNodeViewer
 	protected static final int DEFAULT_BOTTOM_HEIGHT = 60;
 	protected static final int DEFAULT_TOP_WIDTH = 60;
 	protected static final int NAME_GAP = 3;
-	private static final StringViewer NAME_VIEWER = new StringViewer(StringViewer.Align.LEFT, false, false);
+	private static final StringViewer NAME_VIEWER = new StringViewer(StringViewer.VerticalAlign.TOP, 
+			StringViewer.HorizontalAlign.LEFT, false, false, true);
 	
 	@Override
 	public void draw(Node pNode, GraphicsContext pGraphics)

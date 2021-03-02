@@ -36,7 +36,8 @@ import javafx.scene.canvas.GraphicsContext;
  */
 public final class PackageDescriptionNodeViewer extends AbstractPackageNodeViewer
 {
-	private static final StringViewer CONTENTS_VIEWER = new StringViewer(StringViewer.Align.CENTER, false, false);
+	private static final StringViewer CONTENTS_VIEWER = new StringViewer(StringViewer.VerticalAlign.CENTER, 
+			StringViewer.HorizontalAlign.CENTER, false, false, true);
 	
 	@Override
 	public void draw(Node pNode, GraphicsContext pGraphics)

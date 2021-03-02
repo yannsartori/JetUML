@@ -42,8 +42,10 @@ public class TypeNodeViewer extends AbstractNodeViewer
 	protected static final int DEFAULT_WIDTH = 100;
 	protected static final int DEFAULT_HEIGHT = 60;
 	protected static final int TOP_INCREMENT = 20;
-	private static final StringViewer NAME_VIEWER = new StringViewer(StringViewer.Align.CENTER, true, false);
-	private static final StringViewer STRING_VIEWER = new StringViewer(StringViewer.Align.LEFT, false, false);
+	private static final StringViewer NAME_VIEWER = new StringViewer(StringViewer.VerticalAlign.CENTER, 
+			StringViewer.HorizontalAlign.CENTER, true, false, true);
+	private static final StringViewer STRING_VIEWER = new StringViewer(StringViewer.VerticalAlign.TOP, 
+			StringViewer.HorizontalAlign.LEFT, false, false, true);
 	
 	@Override
 	public void draw(Node pNode, GraphicsContext pGraphics)

@@ -41,7 +41,8 @@ public final class NoteNodeViewer extends AbstractNodeViewer
 	private static final int DEFAULT_HEIGHT = 40;
 	private static final int FOLD_LENGTH = 8;
 	private static final Color NOTE_COLOR = Color.color(0.9f, 0.9f, 0.6f); // Pale yellow
-	private static final StringViewer NOTE_VIEWER = new StringViewer(StringViewer.Align.LEFT, false, false);
+	private static final StringViewer NOTE_VIEWER = new StringViewer(StringViewer.VerticalAlign.TOP, 
+			StringViewer.HorizontalAlign.LEFT, false, false, true);
 	
 	@Override
 	public void draw(Node pNode, GraphicsContext pGraphics)
