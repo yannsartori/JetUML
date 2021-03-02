@@ -42,31 +42,49 @@ public final class StringViewer
 	private static final FontMetrics FONT_BOLD_METRICS = new FontMetrics(FONT_BOLD);
 	
 	private static final Dimension EMPTY = new Dimension(0, 0);
-	private static final int HORIZONTAL_TEXT_PADDING = 7;
-	private static final int VERTICAL_TEXT_PADDING = 7;
+	private static final int DEFAULT_HORIZONTAL_TEXT_PADDING = 7;
+	private static final int DEFAULT_VERTICAL_TEXT_PADDING = 7;
 	
 	/**
-	 * How to align the text in this string.
+	 * How to align the text in this string horizontally.
 	 */
-	public enum Align
+	public enum HorizontalAlign
 	{ LEFT, CENTER, RIGHT }
 	
-	private Align aAlignment = Align.CENTER;
+	/**
+	 * How to align the text in this string vertically.
+	 */
+	public enum VerticalAlign
+	{ TOP, CENTER, BOTTOM }
+	
+	private VerticalAlign aVerticalAlignment = VerticalAlign.CENTER;
+	private HorizontalAlign aHorizontalAlignment = HorizontalAlign.CENTER;
 	private final boolean aBold;
 	private final boolean aUnderlined;
+	private int aHorizontalPadding = DEFAULT_HORIZONTAL_TEXT_PADDING;
+	private int aVerticalPadding = DEFAULT_VERTICAL_TEXT_PADDING;
 	
 	/**
 	 * Creates a new StringViewer.
 	 * 
-	 * @param pAlignment The alignment of the string.
+	 * @param pVerticalAlignment The vertical alignment of the string.
+	 * @param pHorizontalAlignment The horizontal alignment of the string.
 	 * @param pBold True if the string is to be rendered bold.
 	 * @param pUnderlined True if the string is to be rendered underlined.
-	 * @pre pAlign != null.
+	 * @param pPadded True if the string is to utilize padding
+	 * @pre pVerticalAlignment != null && pHorizontalAlignment != null.
 	 */
-	public StringViewer(Align pAlignment, boolean pBold, boolean pUnderlined) 
+	public StringViewer(VerticalAlign pVerticalAlignment, HorizontalAlign pHorizontalAlignment, boolean pBold, boolean pUnderlined, 
+			boolean pPadded) 
 	{
-		assert pAlignment != null;
-		aAlignment = pAlignment;
+		assert pVerticalAlignment != null && pHorizontalAlignment != null;
+		if ( !pPadded )
+		{
+			aHorizontalPadding = 0;
+			aVerticalPadding = 0;
+		}
+		aVerticalAlignment = pVerticalAlignment;
+		aHorizontalAlignment = pHorizontalAlignment;
 		aBold = pBold;
 		aUnderlined = pUnderlined;
 	}
@@ -107,21 +125,34 @@ public final class StringViewer
 			return EMPTY;
 		}
 		Dimension dimension = getFontMetrics().getDimension(pString);
-		return new Dimension(Math.round(dimension.width() + HORIZONTAL_TEXT_PADDING*2), 
-				Math.round(dimension.height() + VERTICAL_TEXT_PADDING*2));
+		return new Dimension(Math.round(dimension.width() + aHorizontalPadding*2), 
+				Math.round(dimension.height() + aVerticalPadding*2));
 	}
 	
 	private TextAlignment getTextAlignment()
 	{		
-		if(aAlignment == Align.LEFT)
+		if(aHorizontalAlignment == HorizontalAlign.LEFT)
 		{
 			return TextAlignment.LEFT;
 		}
-		else if(aAlignment == Align.CENTER)
+		else if(aHorizontalAlignment == HorizontalAlign.CENTER)
 		{
 			return TextAlignment.CENTER;
 		}
 		return TextAlignment.RIGHT;
+	}
+	
+	private VPos getTextBaseline()
+	{
+		if ( aVerticalAlignment == VerticalAlign.TOP )
+		{
+			return VPos.TOP;
+		}
+		else if ( aVerticalAlignment == VerticalAlign.CENTER )
+		{
+			return VPos.CENTER;
+		}
+		return VPos.BASELINE;
 	}
 	
 	/**
@@ -136,19 +167,22 @@ public final class StringViewer
 		final TextAlignment oldAlign = pGraphics.getTextAlign();
 		
 		pGraphics.setTextAlign(getTextAlignment());
+		pGraphics.setTextBaseline(getTextBaseline());
 		
 		int textX = 0;
 		int textY = 0;
-		if(aAlignment == Align.CENTER) 
+		if(aHorizontalAlignment == HorizontalAlign.CENTER) 
 		{
 			textX = pRectangle.getWidth()/2;
-			textY = pRectangle.getHeight()/2;
-			pGraphics.setTextBaseline(VPos.CENTER);
 		}
 		else
 		{
-			pGraphics.setTextBaseline(VPos.TOP);
-			textX = HORIZONTAL_TEXT_PADDING;
+			textX = aHorizontalPadding;
+		}
+		
+		if ( aVerticalAlignment == VerticalAlign.CENTER )
+		{
+			textY = pRectangle.getHeight()/2;
 		}
 		
 		pGraphics.translate(pRectangle.getX(), pRectangle.getY());
@@ -159,12 +193,12 @@ public final class StringViewer
 			int xOffset = 0;
 			int yOffset = 0;
 			Dimension dimension = getFontMetrics().getDimension(pString);
-			if(aAlignment == Align.CENTER)
+			if(aHorizontalAlignment == HorizontalAlign.CENTER)
 			{
 				xOffset = dimension.width()/2;
 				yOffset = (int) (getFont().getSize()/2) + 1;
 			}
-			else if(aAlignment == Align.RIGHT)
+			else if(aHorizontalAlignment == HorizontalAlign.RIGHT)
 			{
 				xOffset = dimension.width();
 			}
