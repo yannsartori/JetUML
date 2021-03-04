@@ -20,6 +20,8 @@
  *******************************************************************************/
 package ca.mcgill.cs.jetuml.viewers.nodes;
 
+import java.util.EnumSet;
+
 import ca.mcgill.cs.jetuml.diagram.Node;
 import ca.mcgill.cs.jetuml.diagram.nodes.UseCaseNode;
 import ca.mcgill.cs.jetuml.geom.Direction;
@@ -39,8 +41,8 @@ public final class UseCaseNodeViewer extends AbstractNodeViewer
 	private static final int DEFAULT_WIDTH = 110;
 	private static final int DEFAULT_HEIGHT = 40;
 	private static final int HORIZONTAL_NAME_PADDING = 30;
-	private static final StringViewer NAME_VIEWER = new StringViewer(StringViewer.VerticalAlign.CENTER, 
-			StringViewer.HorizontalAlign.CENTER, false, false, true);
+	private static final StringViewer NAME_VIEWER = StringViewer.get(StringViewer.VerticalAlign.CENTER, 
+			StringViewer.HorizontalAlign.CENTER, EnumSet.of(StringViewer.FontDecorations.PADDING));
 	
 	@Override
 	public void draw(Node pNode, GraphicsContext pGraphics)

@@ -20,6 +20,7 @@
  *******************************************************************************/
 package ca.mcgill.cs.jetuml.viewers.edges;
 
+import java.util.EnumSet;
 import java.util.function.Function;
 
 import ca.mcgill.cs.jetuml.diagram.Edge;
@@ -46,12 +47,12 @@ import javafx.scene.shape.Shape;
  */
 public class SegmentedEdgeViewer extends AbstractEdgeViewer
 {
-	private static final StringViewer CENTERED_TOP_STRING_VIEWER = new StringViewer(StringViewer.VerticalAlign.TOP, 
-			StringViewer.HorizontalAlign.CENTER, false, false, true);
-	private static final StringViewer CENTERED_BOTTOM_STRING_VIEWER = new StringViewer(StringViewer.VerticalAlign.BOTTOM, 
-			StringViewer.HorizontalAlign.CENTER, false, false, true);
-	private static final StringViewer LEFT_JUSTIFIED_STRING_VIEWER = new StringViewer(StringViewer.VerticalAlign.TOP, 
-			StringViewer.HorizontalAlign.LEFT, false, false, false);
+	private static final StringViewer CENTERED_TOP_STRING_VIEWER = StringViewer.get(StringViewer.VerticalAlign.TOP, 
+			StringViewer.HorizontalAlign.CENTER, EnumSet.of(StringViewer.FontDecorations.PADDING));
+	private static final StringViewer CENTERED_BOTTOM_STRING_VIEWER = StringViewer.get(StringViewer.VerticalAlign.BOTTOM, 
+			StringViewer.HorizontalAlign.CENTER, EnumSet.of(StringViewer.FontDecorations.PADDING));
+	private static final StringViewer LEFT_JUSTIFIED_STRING_VIEWER = StringViewer.get(StringViewer.VerticalAlign.TOP, 
+			StringViewer.HorizontalAlign.LEFT, EnumSet.of(StringViewer.FontDecorations.PADDING));
 	
 	private Function<Edge, LineStyle> aLineStyleExtractor;
 	private Function<Edge, ArrowHead> aArrowStartExtractor;

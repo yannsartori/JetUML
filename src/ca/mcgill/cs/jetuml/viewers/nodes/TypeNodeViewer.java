@@ -22,6 +22,8 @@ package ca.mcgill.cs.jetuml.viewers.nodes;
 
 import static ca.mcgill.cs.jetuml.geom.GeomUtils.max;
 
+import java.util.EnumSet;
+
 import ca.mcgill.cs.jetuml.diagram.Node;
 import ca.mcgill.cs.jetuml.diagram.nodes.TypeNode;
 import ca.mcgill.cs.jetuml.geom.Dimension;
@@ -42,10 +44,10 @@ public class TypeNodeViewer extends AbstractNodeViewer
 	protected static final int DEFAULT_WIDTH = 100;
 	protected static final int DEFAULT_HEIGHT = 60;
 	protected static final int TOP_INCREMENT = 20;
-	private static final StringViewer NAME_VIEWER = new StringViewer(StringViewer.VerticalAlign.CENTER, 
-			StringViewer.HorizontalAlign.CENTER, true, false, true);
-	private static final StringViewer STRING_VIEWER = new StringViewer(StringViewer.VerticalAlign.TOP, 
-			StringViewer.HorizontalAlign.LEFT, false, false, true);
+	private static final StringViewer NAME_VIEWER = StringViewer.get(StringViewer.VerticalAlign.CENTER, 
+			StringViewer.HorizontalAlign.CENTER, EnumSet.of(StringViewer.FontDecorations.PADDING, StringViewer.FontDecorations.BOLD));
+	private static final StringViewer STRING_VIEWER = StringViewer.get(StringViewer.VerticalAlign.TOP, 
+			StringViewer.HorizontalAlign.LEFT, EnumSet.of(StringViewer.FontDecorations.PADDING));
 	
 	@Override
 	public void draw(Node pNode, GraphicsContext pGraphics)
