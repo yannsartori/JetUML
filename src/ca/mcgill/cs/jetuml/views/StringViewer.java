@@ -20,6 +20,12 @@
  *******************************************************************************/
 package ca.mcgill.cs.jetuml.views;
 
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 import ca.mcgill.cs.jetuml.geom.Dimension;
 import ca.mcgill.cs.jetuml.geom.Rectangle;
 import javafx.geometry.VPos;
@@ -35,7 +41,7 @@ import javafx.scene.text.TextAlignment;
  * - different alignments.
  */
 public final class StringViewer
-{
+{	
 	public static final Font FONT = Font.font("System", 12);
 	private static final Font FONT_BOLD = Font.font(FONT.getFamily(), FontWeight.BOLD, FONT.getSize());
 	private static final FontMetrics FONT_METRICS = new FontMetrics(FONT);
@@ -45,6 +51,14 @@ public final class StringViewer
 	private static final int DEFAULT_HORIZONTAL_TEXT_PADDING = 7;
 	private static final int DEFAULT_VERTICAL_TEXT_PADDING = 7;
 	
+	private static final Map<Set<Object>, StringViewer> STORE = new HashMap<Set<Object>, StringViewer>();
+	
+	/**
+	 * How to align the text in this string vertically.
+	 */
+	public enum VerticalAlign
+	{ TOP , CENTER, BOTTOM }
+	
 	/**
 	 * How to align the text in this string horizontally.
 	 */
@@ -52,10 +66,10 @@ public final class StringViewer
 	{ LEFT, CENTER, RIGHT }
 	
 	/**
-	 * How to align the text in this string vertically.
+	 * Various text decorations.
 	 */
-	public enum VerticalAlign
-	{ TOP, CENTER, BOTTOM }
+	public enum FontDecorations
+	{ BOLD, UNDERLINED, PADDING }
 	
 	private VerticalAlign aVerticalAlignment = VerticalAlign.CENTER;
 	private HorizontalAlign aHorizontalAlignment = HorizontalAlign.CENTER;
@@ -64,29 +78,34 @@ public final class StringViewer
 	private int aHorizontalPadding = DEFAULT_HORIZONTAL_TEXT_PADDING;
 	private int aVerticalPadding = DEFAULT_VERTICAL_TEXT_PADDING;
 	
-	/**
-	 * Creates a new StringViewer.
-	 * 
-	 * @param pVerticalAlignment The vertical alignment of the string.
-	 * @param pHorizontalAlignment The horizontal alignment of the string.
-	 * @param pBold True if the string is to be rendered bold.
-	 * @param pUnderlined True if the string is to be rendered underlined.
-	 * @param pPadded True if the string is to utilize padding
-	 * @pre pVerticalAlignment != null && pHorizontalAlignment != null.
-	 */
-	public StringViewer(VerticalAlign pVerticalAlignment, HorizontalAlign pHorizontalAlignment, boolean pBold, boolean pUnderlined, 
-			boolean pPadded) 
+	private StringViewer(VerticalAlign pVerticalAlignment, HorizontalAlign pHorizontalAlignment, EnumSet<FontDecorations> pDecorations) 
 	{
-		assert pVerticalAlignment != null && pHorizontalAlignment != null;
-		if ( !pPadded )
+		if ( !pDecorations.contains(FontDecorations.PADDING) )
 		{
 			aHorizontalPadding = 0;
 			aVerticalPadding = 0;
 		}
 		aVerticalAlignment = pVerticalAlignment;
 		aHorizontalAlignment = pHorizontalAlignment;
-		aBold = pBold;
-		aUnderlined = pUnderlined;
+		aBold = pDecorations.contains(FontDecorations.BOLD);
+		aUnderlined = pDecorations.contains(FontDecorations.UNDERLINED);
+	}
+	
+	/**
+	 * Lazily creates or retrieves an instance of the class.
+	 * @param pVerticalAlign The vertical alignment to use.
+	 * @param pHorizontalAlign The horizontal alignment to use.
+	 * @param pDecorations The decorations to apply.
+	 * @pre pVerticalAlign != null && pHorizontalAlign != null && pDecorations != null
+	 * @return The StringViewer instance with the requested properties.
+	 */
+	public static StringViewer get(VerticalAlign pVerticalAlign, HorizontalAlign pHorizontalAlign, EnumSet<FontDecorations> pDecorations)
+	{
+		assert pVerticalAlign != null && pHorizontalAlign != null &&  pDecorations != null;
+		// Make sure key is immutable
+		Set<Object> keySet = Set.of(pVerticalAlign, pHorizontalAlign, Collections.unmodifiableSet(pDecorations));
+		return STORE.computeIfAbsent(keySet, k -> new StringViewer(pVerticalAlign, pHorizontalAlign, pDecorations));
+		
 	}
 	
 	private Font getFont()
