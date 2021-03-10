@@ -22,7 +22,7 @@ package ca.mcgill.cs.jetuml.viewers.nodes;
 
 import static ca.mcgill.cs.jetuml.geom.GeomUtils.max;
 
-import java.util.EnumSet;
+import static java.util.EnumSet.of;
 
 import ca.mcgill.cs.jetuml.diagram.Node;
 import ca.mcgill.cs.jetuml.diagram.nodes.AbstractPackageNode;
@@ -46,7 +46,7 @@ public abstract class AbstractPackageNodeViewer extends AbstractNodeViewer
 	protected static final int DEFAULT_TOP_WIDTH = 60;
 	protected static final int NAME_GAP = 3;
 	private static final StringViewer NAME_VIEWER = StringViewer.get(StringViewer.VerticalAlign.TOP, 
-			StringViewer.HorizontalAlign.LEFT, EnumSet.of(StringViewer.FontDecorations.PADDING));
+			StringViewer.HorizontalAlign.LEFT, of(StringViewer.FontDecorations.PADDING));
 	
 	@Override
 	public void draw(Node pNode, GraphicsContext pGraphics)

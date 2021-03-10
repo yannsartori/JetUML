@@ -20,7 +20,7 @@
  *******************************************************************************/
 package ca.mcgill.cs.jetuml.viewers.edges;
 
-import java.util.EnumSet;
+import static java.util.EnumSet.of;
 
 import ca.mcgill.cs.jetuml.diagram.Edge;
 import ca.mcgill.cs.jetuml.diagram.edges.UseCaseDependencyEdge;
@@ -51,7 +51,7 @@ public final class UseCaseDependencyEdgeViewer extends LabeledStraightEdgeViewer
 		final float scale = 0.75f;
 		canvas.getGraphicsContext2D().scale(scale, scale);
 		StringViewer.get(StringViewer.VerticalAlign.CENTER, StringViewer.HorizontalAlign.CENTER, 
-			EnumSet.of(StringViewer.FontDecorations.PADDING)).draw(getIconTag(pEdge), 
+			of(StringViewer.FontDecorations.PADDING)).draw(getIconTag(pEdge), 
 					canvas.getGraphicsContext2D(), new Rectangle(1, BUTTON_SIZE, 1, 1));
 		return canvas;
 	}

@@ -20,7 +20,7 @@
  *******************************************************************************/
 package ca.mcgill.cs.jetuml.viewers.nodes;
 
-import java.util.EnumSet;
+import static java.util.EnumSet.allOf;
 
 import ca.mcgill.cs.jetuml.diagram.Node;
 import ca.mcgill.cs.jetuml.diagram.nodes.FieldNode;
@@ -44,7 +44,7 @@ public final class ObjectNodeViewer extends AbstractNodeViewer
 	private static final int XGAP = 5;
 	private static final int YGAP = 5;
 	private static final StringViewer NAME_VIEWER = StringViewer.get(StringViewer.VerticalAlign.CENTER, 
-			StringViewer.HorizontalAlign.CENTER, EnumSet.allOf(StringViewer.FontDecorations.class));
+			StringViewer.HorizontalAlign.CENTER, allOf(StringViewer.FontDecorations.class));
 	private static final FieldNodeViewer FIELD_NODE_VIEWER = new FieldNodeViewer();
 	
 	@Override

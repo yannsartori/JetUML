@@ -20,7 +20,7 @@
  *******************************************************************************/
 package ca.mcgill.cs.jetuml.viewers.edges;
 
-import java.util.EnumSet;
+import static java.util.EnumSet.noneOf;
 
 import ca.mcgill.cs.jetuml.diagram.Edge;
 import ca.mcgill.cs.jetuml.geom.Dimension;
@@ -47,7 +47,7 @@ public abstract class AbstractEdgeViewer implements EdgeViewer
 	protected static final int BUTTON_SIZE = 25;
 	protected static final int OFFSET = 3;
 	private static final StringViewer SIZE_TESTER = StringViewer.get(StringViewer.VerticalAlign.TOP, StringViewer.HorizontalAlign.LEFT, 
-			EnumSet.noneOf(StringViewer.FontDecorations.class));
+			noneOf(StringViewer.FontDecorations.class));
 	
 	private static final int DEGREES_180 = 180;
 	

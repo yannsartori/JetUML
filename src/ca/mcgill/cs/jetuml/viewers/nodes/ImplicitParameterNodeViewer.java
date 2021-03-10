@@ -22,7 +22,8 @@ package ca.mcgill.cs.jetuml.viewers.nodes;
 
 import static ca.mcgill.cs.jetuml.geom.GeomUtils.max;
 
-import java.util.EnumSet;
+import static java.util.EnumSet.of;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -51,7 +52,7 @@ public final class ImplicitParameterNodeViewer extends AbstractNodeViewer
 	private static final int TOP_HEIGHT = 60;
 	private static final int Y_GAP_SMALL = 20; 
 	private static final StringViewer NAME_VIEWER = StringViewer.get(StringViewer.VerticalAlign.CENTER, StringViewer.HorizontalAlign.CENTER, 
-			EnumSet.of(StringViewer.FontDecorations.UNDERLINED, StringViewer.FontDecorations.PADDING));
+			of(StringViewer.FontDecorations.UNDERLINED, StringViewer.FontDecorations.PADDING));
 	private static final CallNodeViewer CALL_NODE_VIEWER = new CallNodeViewer();
 	
 	@Override

@@ -20,7 +20,7 @@
  *******************************************************************************/
 package ca.mcgill.cs.jetuml.viewers.nodes;
 
-import java.util.EnumSet;
+import static java.util.EnumSet.of;
 
 import ca.mcgill.cs.jetuml.diagram.Node;
 import ca.mcgill.cs.jetuml.diagram.nodes.StateNode;
@@ -41,7 +41,7 @@ public final class StateNodeViewer extends AbstractNodeViewer
 	private static final int DEFAULT_WIDTH = 80;
 	private static final int DEFAULT_HEIGHT = 60;
 	private static final StringViewer NAME_VIEWER = StringViewer.get(StringViewer.VerticalAlign.CENTER, 
-			StringViewer.HorizontalAlign.CENTER, EnumSet.of(StringViewer.FontDecorations.PADDING));
+			StringViewer.HorizontalAlign.CENTER, of(StringViewer.FontDecorations.PADDING));
 	
 	@Override
 	public void draw(Node pNode, GraphicsContext pGraphics)

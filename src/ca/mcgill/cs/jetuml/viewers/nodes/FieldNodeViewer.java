@@ -20,7 +20,7 @@
  *******************************************************************************/
 package ca.mcgill.cs.jetuml.viewers.nodes;
 
-import java.util.EnumSet;
+import static java.util.EnumSet.of;
 
 import ca.mcgill.cs.jetuml.diagram.Node;
 import ca.mcgill.cs.jetuml.diagram.nodes.FieldNode;
@@ -45,11 +45,11 @@ public final class FieldNodeViewer extends AbstractNodeViewer
 	private static final int DEFAULT_HEIGHT = 20;
 	private static final int XGAP = 5;
 	private static final StringViewer VALUE_VIEWER = StringViewer.get(StringViewer.VerticalAlign.TOP, 
-			StringViewer.HorizontalAlign.LEFT, EnumSet.of(StringViewer.FontDecorations.PADDING));
+			StringViewer.HorizontalAlign.LEFT, of(StringViewer.FontDecorations.PADDING));
 	private static final StringViewer NAME_VIEWER = StringViewer.get(StringViewer.VerticalAlign.TOP, 
-			StringViewer.HorizontalAlign.LEFT, EnumSet.of(StringViewer.FontDecorations.PADDING));
+			StringViewer.HorizontalAlign.LEFT, of(StringViewer.FontDecorations.PADDING));
 	private static final StringViewer EQUALS_VIEWER = StringViewer.get(StringViewer.VerticalAlign.TOP, 
-			StringViewer.HorizontalAlign.LEFT, EnumSet.of(StringViewer.FontDecorations.PADDING));
+			StringViewer.HorizontalAlign.LEFT, of(StringViewer.FontDecorations.PADDING));
 	private static final int MID_OFFSET = EQUALS_VIEWER.getDimension(EQUALS).width() / 2;
 	private static final ObjectNodeViewer OBJECT_NODE_VIEWER = new ObjectNodeViewer();
 	

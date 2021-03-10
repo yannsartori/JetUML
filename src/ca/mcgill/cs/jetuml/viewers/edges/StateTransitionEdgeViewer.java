@@ -22,7 +22,7 @@ package ca.mcgill.cs.jetuml.viewers.edges;
 
 import static ca.mcgill.cs.jetuml.views.StringViewer.FONT;
 
-import java.util.EnumSet;
+import static java.util.EnumSet.noneOf;
 
 import ca.mcgill.cs.jetuml.diagram.Edge;
 import ca.mcgill.cs.jetuml.diagram.edges.StateTransitionEdge;
@@ -67,7 +67,7 @@ public final class StateTransitionEdgeViewer extends AbstractEdgeViewer
 	private static final int MAX_LENGTH_FOR_NORMAL_FONT = 15;
 	private static final int MIN_FONT_SIZE = 9;
 	private static final StringViewer STRING_VIEWER = StringViewer.get(StringViewer.VerticalAlign.BOTTOM, StringViewer.HorizontalAlign.CENTER, 
-			EnumSet.noneOf(StringViewer.FontDecorations.class));
+			noneOf(StringViewer.FontDecorations.class));
 	
 	// The amount of vertical difference in connection points to tolerate
 	// before centering the edge label on one side instead of in the center.
