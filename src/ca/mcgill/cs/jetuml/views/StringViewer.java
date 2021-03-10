@@ -26,6 +26,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import ca.mcgill.cs.jetuml.annotations.Flyweight;
+import ca.mcgill.cs.jetuml.annotations.Immutable;
 import ca.mcgill.cs.jetuml.geom.Dimension;
 import ca.mcgill.cs.jetuml.geom.Rectangle;
 import javafx.geometry.VPos;
@@ -40,6 +42,8 @@ import javafx.scene.text.TextAlignment;
  * - bold
  * - different alignments.
  */
+@Immutable 
+@Flyweight
 public final class StringViewer
 {	
 	public static final Font FONT = Font.font("System", 12);
